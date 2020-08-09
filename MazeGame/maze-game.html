@@ -1,0 +1,466 @@
+<html>
+  <head>
+    <style>
+      *{
+        font-family: comic sans MS;
+      }
+      .container {
+        display: flex;
+        flex-direction: row;
+      }
+      #playground {
+        width: 301px;
+        height: 300px;
+        position: relative;
+        border: 2px brown solid;
+      }
+      #player {
+        height: 12px;
+        width: 12px;
+        top: 2px;
+        left: 2px;
+        background-color: saddlebrown;
+        position: absolute;
+      }
+      #tabMaze {
+        border: 2px;
+        position: static;
+        border-collapse: collapse;
+        background-color: aquamarine;
+      }
+      td {
+        border: 1px solid black;
+        width: 12px;
+        height: 15px;
+      }
+      #up {
+        margin-top: 10px;
+        margin-left: 50px;
+      }
+      #time{
+        margin-left:3rem;
+      }
+      #buttons{
+        margin-top: 0;
+        margin-left:3rem;
+
+      }
+    </style>
+  </head>
+  <body>
+    <h1 style="margin-left: 10rem;">My Maze</h1>
+    <div class="container">
+      
+      <div id="playground">
+        <div id="player"></div>
+        <table id="tabMaze"></table>
+      </div>
+      <div id="buttons">
+        <p>Number of moves made</p>
+        <b><p style="margin-left: 2rem;" id="moves"></p></b>
+        <h2 id="win"></h2>
+        <span style="margin-left: 2rem;">Time Left:</span>
+        <h3 id="time"></h3>
+        <p style="margin-left: 0;">Refresh to change Map</p>
+        <button id="up" onclick="moveUp()">up</button><br /><br />
+        <button id="left" onclick="moveLeft()">left</button>
+        <button id="down" onclick="moveDown()">down</button>
+        <button id="right" onclick="moveRight()">right</button>
+      </div>
+      </div>
+    <script>
+      x = 2;
+      y = 2;
+      var c= 0;
+      var tt=10;
+      var tabMaze = document.getElementById("tabMaze");
+      var player = document.getElementById("player");
+      init();
+      function moveLeft() {
+        let zcol = getcol();
+        if (zcol == 0) return;
+        let zrow = getrow();
+
+        var td = document.getElementById("row" + zrow + "col" + zcol);
+
+        var bgcol = document.getElementById("row" + zrow + "col" + (zcol - 1))
+          .style.backgroundColor;
+        console.log(bgcol);
+
+        td.style.backgroundColor = "#999";
+
+        if (bgcol == "") {
+          if (x > 2) x = x - 15;
+        } else if (bgcol == "rgb(255, 255, 0)") {
+          x = x - 15;
+          winner();
+        }
+        player.style.left = x;
+      }
+
+      function moveRight() {
+        let zcol = getcol();
+        if (zcol == 19) return;
+        let zrow = getrow();
+
+        var td = document.getElementById("row" + zrow + "col" + zcol);
+        var bgcol = document.getElementById("row" + zrow + "col" + (zcol + 1))
+          .style.backgroundColor;
+        console.log(bgcol);
+
+        td.style.backgroundColor = "#999";
+
+        if (bgcol == "") {
+          if (x < 280) x = x + 15;
+        } else if (bgcol == "rgb(255, 255, 0)") {
+          x = x + 15;
+          winner();
+        }
+        player.style.left = x;
+      }
+
+      function moveDown() {
+        let zcol = getcol();
+        let zrow = getrow();
+        if (zrow == 19) return;
+        var td = document.getElementById("row" + zrow + "col" + zcol);
+        var bgcol = document.getElementById("row" + (zrow + 1) + "col" + zcol)
+          .style.backgroundColor;
+        console.log(bgcol);
+
+        td.style.backgroundColor = "#999";
+        if (bgcol == "") {
+          if (y < 280) y = y + 15;
+        } else if (bgcol == "rgb(255, 255, 0)") {
+          y = y + 15;
+          winner();
+        }
+        player.style.top = y;
+      }
+
+      function moveUp() {
+        let zcol = getcol();
+        let zrow = getrow();
+        if (zrow == 0) return;
+
+        var td = document.getElementById("row" + zrow + "col" + zcol);
+        var bgcol = document.getElementById("row" + (zrow - 1) + "col" + zcol)
+          .style.backgroundColor;
+        console.log(bgcol);
+
+        td.style.backgroundColor = "#999";
+
+        if (bgcol == "") {
+          if (y > 2) y = y - 15;
+        } else if (bgcol == "rgb(255, 255, 0)") {
+          y = y - 15;
+          winner();
+        }
+        player.style.top = y;
+      }
+
+      function getcol() {
+        var zx = (x - 2) / 15;
+        return zx;
+      }
+      function getrow() {
+        var zy = (y - 2) / 15;
+        return zy;
+      }
+      function winner() {
+        var image = document.createElement("img");
+        image.setAttribute("src", "fireworks.gif");
+        image.setAttribute("width", "100");
+        image.setAttribute("height", "100");
+        image.style.position = "absolute";
+        image.style.top = y - 10;
+        image.style.left = x - 10;
+        player.style.backgroundColor = "white";
+        tabMaze.append(image);
+        document.getElementById("win").innerHTML = "Congratulations!! You win..."
+      }
+
+      function init() {
+        for (let i = 0; i < 20; i++) {
+          var row = document.createElement("tr");
+          tabMaze.appendChild(row);
+          for (let j = 0; j < 20; j++) {
+            var td = document.createElement("td");
+            td.setAttribute("id", "row" + i + "col" + j);
+            //td.innerText = "1";
+            row.appendChild(td);
+          }
+        }
+        var n = Math.floor(Math.random() * (5 - 1 + 1) + 1);
+        if(n == 1)
+        design1();
+        else if(n == 2)
+        design2();
+        else if(n ==3)
+        design3();
+        else if(n == 4)
+        design4();
+        else
+        design5();
+      }
+
+      function design1() {
+        for (let i = 2; i < 20; i += 3) {
+          for (let j = 2; j < 20; j += 2) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "493F36";
+            document.getElementById(
+              "row" + (i + 1) + "col" + j
+            ).style.backgroundColor = "493F36";
+          }
+        }
+        for (let i = 2; i < 19; i += 4) {
+          for (let j = 5; j < 19; j += 4) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "493F36";
+          }
+        }
+        for (let i = 4; i < 19; i += 6) {
+          for (let j = 2; j < 19; j += 4) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "493F36";
+          }
+        }
+        for (let i = 2; i < 19; i += 16) {
+          for (let j = 5; j < 19; j += 2) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "493F36";
+          }
+        }
+
+        document.getElementById("row" + 7 + "col" + 5).style.backgroundColor =
+          "493F36";
+        document.getElementById("row" + 13 + "col" + 13).style.backgroundColor =
+          "493F36";
+        document.getElementById("row" + 8 + "col" + 11).style.backgroundColor =
+          "493F36";
+        document.getElementById("row" + 15 + "col" + 17).style.backgroundColor =
+          "#ff0";
+      }
+      // var x = setInterval(function() {
+      //   var now = new Date().getSeconds();
+      // })
+      function design2() {
+        for (let i = 2; i < 20; i += 2) {
+          for (let j = 2; j < 20; j += 3) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "493F36";
+            document.getElementById(
+              "row" + (i + 1) + "col" + j
+            ).style.backgroundColor = "493F36";
+          }
+        }
+        for (let i = 2; i < 19; i += 5) {
+          for (let j = 5; j < 19; j += 5) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "493F36";
+          }
+        }
+        for (let i = 4; i < 19; i += 4) {
+          for (let j = 2; j < 19; j += 6) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "493F36";
+          }
+        }
+        for (let i = 2; i < 19; i += 2) {
+          for (let j = 5; j < 19; j += 16) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "493F36";
+          }
+        }
+
+        document.getElementById("row" + 7 + "col" + 5).style.backgroundColor =
+          "493F36";
+        document.getElementById("row" + 13 + "col" + 13).style.backgroundColor =
+          "493F36";
+        document.getElementById("row" + 8 + "col" + 11).style.backgroundColor =
+          "493F36";
+        document.getElementById("row" + 15 + "col" + 17).style.backgroundColor =
+          "#ff0";
+      }
+      function design3() {
+        for (let i = 2; i < 20; i += 4) {
+          for (let j = 2; j < 20; j += 6) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "493F36";
+            document.getElementById(
+              "row" + (i + 1) + "col" + j
+            ).style.backgroundColor = "493F36";
+          }
+        }
+        for (let i = 2; i < 19; i += 4) {
+          for (let j = 5; j < 19; j += 6) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "493F36";
+          }
+        }
+        for (let i = 4; i < 19; i += 3) {
+          for (let j = 2; j < 19; j += 7) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "493F36";
+          }
+        }
+        for (let i = 2; i < 19; i += 4) {
+          for (let j = 5; j < 19; j += 6) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "493F36";
+          }
+        }
+
+        document.getElementById("row" + 7 + "col" + 5).style.backgroundColor =
+          "493F36";
+        document.getElementById("row" + 13 + "col" + 13).style.backgroundColor =
+          "493F36";
+        document.getElementById("row" + 8 + "col" + 11).style.backgroundColor =
+          "493F36";
+        document.getElementById("row" + 15 + "col" + 17).style.backgroundColor =
+          "#ff0";
+      }
+      function design4() {
+        for (let i = 2; i < 20; i += 3) {
+          for (let j = 2; j < 20; j += 4) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "#999";
+            document.getElementById(
+              "row" + (i + 1) + "col" + j
+            ).style.backgroundColor = "#999";
+          }
+        }
+        for (let i = 2; i < 19; i += 2) {
+          for (let j = 5; j < 19; j += 12) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "#999";
+          }
+        }
+        for (let i = 4; i < 19; i += 3) {
+          for (let j = 2; j < 19; j += 17) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "#999";
+          }
+        }
+        for (let i = 2; i < 19; i += 12) {
+          for (let j = 5; j < 19; j += 14) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "#999";
+          }
+        }
+
+        document.getElementById("row" + 7 + "col" + 5).style.backgroundColor =
+          "#999";
+        document.getElementById("row" + 13 + "col" + 13).style.backgroundColor =
+          "#999";
+        document.getElementById("row" + 8 + "col" + 11).style.backgroundColor =
+          "#999";
+        document.getElementById("row" + 15 + "col" + 17).style.backgroundColor =
+          "#ff0";
+      }
+      function design5() {
+        for (let i = 2; i < 20; i += 10) {
+          for (let j = 2; j < 20; j += 1) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "#999";
+            document.getElementById(
+              "row" + (i + 1) + "col" + j
+            ).style.backgroundColor = "#999";
+          }
+        }
+        for (let i = 2; i < 19; i += 8) {
+          for (let j = 5; j < 19; j += 4) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "#999";
+          }
+        }
+        for (let i = 4; i < 19; i += 13) {
+          for (let j = 2; j < 19; j += 7) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "#999";
+          }
+        }
+        for (let i = 2; i < 19; i += 5) {
+          for (let j = 5; j < 19; j += 3) {
+            document.getElementById(
+              "row" + i + "col" + j
+            ).style.backgroundColor = "#999";
+          }
+        }
+
+        document.getElementById("row" + 7 + "col" + 5).style.backgroundColor =
+          "#999";
+        document.getElementById("row" + 13 + "col" + 13).style.backgroundColor =
+          "#999";
+        document.getElementById("row" + 8 + "col" + 11).style.backgroundColor =
+          "#999";
+        document.getElementById("row" + 15 + "col" + 17).style.backgroundColor =
+          "#ff0";
+      }
+    document.onkeydown = checkKey;
+
+    function checkKey(e) {
+
+        e = e || window.event;
+
+        if (e.keyCode == '38') {
+            // up arrow
+            moveUp();
+            //console.log("UP")
+            c++;
+            document.getElementById("moves").innerHTML = c;
+        }
+        else if (e.keyCode == '40') {
+            // down arrow
+            moveDown();
+            //console.log("down")
+            c++;
+            document.getElementById("moves").innerHTML = c;
+        }
+        else if (e.keyCode == '37') {
+          // left arrow]
+          moveLeft();
+          //console.log("left")
+          c++;
+            document.getElementById("moves").innerHTML = c;
+        }
+        else if (e.keyCode == '39') {
+          // right arrow
+          moveRight();
+          //console.log("right")
+          c++;
+            document.getElementById("moves").innerHTML = c;
+        }
+      }
+      var hard = setInterval(function(){
+        document.getElementById("time").innerText = tt;
+        tt--;
+        if(tt == -1){
+          clearInterval(hard);
+          document.getElementById("tabMaze").style.visibility = "hidden";
+          document.getElementById("time").innerHTML = "Timed Out! try again"
+        }
+      }, 1000);
+    </script>
+  </body>
+</html>
